@@ -1,0 +1,85 @@
+<!--Created by arivis Pro 4.2.1 tags/4.2.1-release^0@2f3534d748ddc033f233773f713c41fe3b8e1035-->
+<pipeline version="4.2" created="2025-05-19T04:31:00.1336507Z" modified="2025-07-27T12:34:57.2035973+03:00">
+  <operations>
+    <operation type-id="arivis.analysis.selection" id="arivis.analysis.selection1">
+      <outputs>[{"Channels":[{"v":1,"id":"arivis.analysis.selection1.0.0","p":null,"n":"488_GFP_CF40_Sona","a":true},{"v":1,"id":"arivis.analysis.selection1.0.1","p":null,"n":"637_Cy5_CF40_Sona","a":true},{"v":1,"id":"arivis.analysis.selection1.0.2","p":null,"n":"561_RFP_CF40_Sona","a":true}]},{"Channels":[]},{"ObjectTags":[]}]</outputs>
+      <settings>{"FilePath":"A:\\tslilt\\2025-06-29_files for analysis_Arivis\\2024-08-11_DBS_G-TRACE_PH3inFR_20Gy_24hX63_2024-08-11_10.30.34.sis","ImageSetId":"0","PixelSize":{"X":0.09785156249999982,"Y":0.0978603515625,"Z":0.2119680851063849},"PixelType":"UInt16","ChannelCount":3,"Bounds":{"X1":0,"X2":2047,"Y1":0,"Y2":2047,"Z1":0,"Z2":187,"T1":0,"T2":0},"Channels":"1-3","SelectionHint":"CurrentImageSet","Scaling":1.0,"ScalingIncludeZ":true,"CropInputData":false,"LegacyMode":false}</settings>
+    </operation>
+    <operation type-id="arivis.analysis.segmentation.CellposeSegmentationOperation" id="arivis.analysis.segmentation.CellposeSegmentationOperation1" name="Cellpose-based Segmenter">
+      <inputs>[{"Channels":[{"v":1,"id":"arivis.analysis.selection1.0.1"}]},{"Channels":[]}]</inputs>
+      <outputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.segmentation.CellposeSegmentationOperation1.0.0","p":null,"n":"Splitting Cells","a":true,"cm":2,"c":"#9D00B1"}]}]</outputs>
+      <settings>{"Model":"cyto2","ExternalModelFilePath":null,"Diameter":4.0,"FlowThreshold":0.4,"ProbabilityThreshold":0.0,"MinSizeFilterActive":true,"MinSize":{"Value":30.0,"Type":2},"PerformPlaneWise":true,"Connectivity":"FullXY","AllowHoles":false,"ObjectNamePattern":"$t #$I ($o)","SmoothNetworkOutput":true,"SmoothNetworkOutputSigma":2.4,"UseFlowThreshold":true}</settings>
+    </operation>
+    <operation type-id="arivis.analysis.segmentation.CellposeSegmentationOperation" id="arivis.analysis.segmentation.CellposeSegmentationOperation2" name="Cellpose-based Segmenter 2">
+      <inputs>[{"Channels":[{"v":1,"id":"arivis.analysis.selection1.0.0"}]},{"Channels":[]}]</inputs>
+      <outputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.segmentation.CellposeSegmentationOperation2.0.0","p":null,"n":"All Green","a":true,"cm":2,"c":"#00D800"}]}]</outputs>
+      <settings>{"Model":"cyto2","ExternalModelFilePath":null,"Diameter":3.0,"FlowThreshold":0.4,"ProbabilityThreshold":0.0,"MinSizeFilterActive":true,"MinSize":{"Value":2E-09,"Type":2},"PerformPlaneWise":true,"Connectivity":"FullXY","AllowHoles":false,"ObjectNamePattern":"$t #$I ($o)","SmoothNetworkOutput":true,"SmoothNetworkOutputSigma":2.4,"UseFlowThreshold":true}</settings>
+    </operation>
+    <operation type-id="arivis.analysis.segmentation.BlobFinder" id="arivis.analysis.segmentation.BlobFinder1" name="Blob Finder">
+      <inputs>[{"Channels":[{"v":1,"id":"arivis.analysis.selection1.0.2"}]}]</inputs>
+      <outputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.segmentation.BlobFinder1.0.0","p":null,"n":"All Red blobs","a":true,"cm":2,"c":"#FF005F"}]}]</outputs>
+      <settings>{"Diameter":1.0,"Level":0.04,"Threshold":0.2,"Normalization":"FirstTimePointGlobal","Minimum":37.0,"Maximum":311.0,"PerformPlaneWise":false,"Connectivity":"FullXY","AllowHoles":false,"ObjectNamePattern":"$t #$I ($o)","UseExponentialNormalization":true}</settings>
+    </operation>
+    <operation type-id="arivis.analysis.volume.FeatureFilter" id="arivis.analysis.volume.FeatureFilter1" name="Object Feature Filter">
+      <inputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.segmentation.BlobFinder1.0.0"}]}]</inputs>
+      <outputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.volume.FeatureFilter1.0.0","p":null,"n":"Filtered Red blobs","a":true,"cm":2,"c":"#D88B00"},{"v":1,"id":"arivis.analysis.volume.FeatureFilter1.0.1","p":null,"n":"not Object Feature Filter","a":false,"cm":0,"c":"Cyan"}]}]</outputs>
+      <settings>{"FilterParts":[{"Mode":"Type","Feature1":{"FeatureId":"arivis.analysis.features.type","ValueIndex":0},"Feature2":null,"Comparison":"GreatherThan","CompareValue1":0.0,"CompareValue2":1.0,"CompareString":""},{"Mode":"SingleFeature","Feature1":{"FeatureId":"arivis.analysis.features.volume","ValueIndex":0},"Feature2":null,"Comparison":"GreatherThan","CompareValue1":3E-19,"CompareValue2":1.0,"CompareString":""},{"Mode":"SingleFeature","Feature1":{"FeatureId":"arivis.analysis.features.intensities[2]","ValueIndex":2},"Feature2":null,"Comparison":"GreatherThan","CompareValue1":400.0,"CompareValue2":1.0,"CompareString":""}]}</settings>
+    </operation>
+    <operation type-id="arivis.analysis.volume.FeatureFilter" id="arivis.analysis.volume.FeatureFilter3" name="Object Feature Filter 3">
+      <inputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.segmentation.CellposeSegmentationOperation2.0.0"}]}]</inputs>
+      <outputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.volume.FeatureFilter3.0.0","p":null,"n":"Filtered Green","a":true,"cm":2,"c":"#0000BA"},{"v":1,"id":"arivis.analysis.volume.FeatureFilter3.0.1","p":null,"n":"not Object Feature Filter 3","a":false,"cm":0,"c":"Cyan"}]}]</outputs>
+      <settings>{"FilterParts":[{"Mode":"Type","Feature1":{"FeatureId":"arivis.analysis.features.type","ValueIndex":0},"Feature2":null,"Comparison":"GreatherThan","CompareValue1":0.0,"CompareValue2":1.0,"CompareString":""},{"Mode":"SingleFeature","Feature1":{"FeatureId":"arivis.analysis.features.intensities[0]","ValueIndex":2},"Feature2":null,"Comparison":"GreatherThan","CompareValue1":120.0,"CompareValue2":1.0,"CompareString":""}]}</settings>
+    </operation>
+    <operation type-id="arivis.analysis.volume.Distances" id="arivis.analysis.volume.Distances1" name="Distances">
+      <inputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.segmentation.CellposeSegmentationOperation1.0.0"}]},{"ObjectTags":[{"v":1,"id":"arivis.analysis.volume.FeatureFilter3.0.0"}]}]</inputs>
+      <outputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.volume.Distances1.0.0","p":null,"n":"Dist1","a":true,"cm":2,"c":"#D800D8"}]}]</outputs>
+      <settings>{"FilterMode":"None","MinDistance":-9.999999999999999E-06,"MaxDistance":9.999999999999999E-06,"OnlyClosestTarget":true,"SetLimitForTargets":false,"NClosestTargets":3,"SourceShape":"Geometry","TargetShape":"Geometry","Relation":"None","ExportMatrix":false,"FilePath":null,"DistanceFeatureId":"7c37a110-d281-4335-8f16-7291d1fb0d5c","StatisticsFeatureId":null,"StoreDistances":true,"StoreStatistics":false,"DistancesFeatureName":"Distances-Min","StatisticsFeatureName":"Distances-Statistics-all"}</settings>
+    </operation>
+    <operation type-id="arivis.analysis.volume.Distances" id="arivis.analysis.volume.Distances2" name="Distances 2">
+      <inputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.segmentation.CellposeSegmentationOperation1.0.0"}]},{"ObjectTags":[{"v":1,"id":"arivis.analysis.volume.FeatureFilter1.0.0"}]}]</inputs>
+      <outputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.volume.Distances2.0.0","p":null,"n":"Dist2","a":true,"cm":2,"c":"#0000D8"}]}]</outputs>
+      <settings>{"FilterMode":"None","MinDistance":-9.999999999999999E-06,"MaxDistance":9.999999999999999E-06,"OnlyClosestTarget":true,"SetLimitForTargets":false,"NClosestTargets":3,"SourceShape":"Geometry","TargetShape":"Geometry","Relation":"None","ExportMatrix":false,"FilePath":null,"DistanceFeatureId":"f3948e41-01f9-4d41-87d2-95aa727c252a","StatisticsFeatureId":null,"StoreDistances":true,"StoreStatistics":false,"DistancesFeatureName":"Distances 2-Min","StatisticsFeatureName":"Distances 2-Statistics-all"}</settings>
+    </operation>
+    <operation type-id="arivis.analysis.volume.ObjectMath" id="arivis.analysis.volume.ObjectMath1" name="Object Math">
+      <inputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.volume.FeatureFilter1.0.0"}]},{"ObjectTags":[{"v":1,"id":"arivis.analysis.volume.FeatureFilter3.0.0"}]}]</inputs>
+      <outputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.volume.ObjectMath1.0.0","p":null,"n":"Red-Green","a":true,"cm":2,"c":"#0000F7"}]}]</outputs>
+      <settings>{"Modification":"Intersect","UseFullConnectivity":true,"OnlyModifiedObjects":false,"ObjectNamePattern":"$n ($o)"}</settings>
+    </operation>
+    <operation type-id="arivis.analysis.volume.ObjectMath" id="arivis.analysis.volume.ObjectMath2" name="Object Math 2">
+      <inputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.segmentation.CellposeSegmentationOperation1.0.0"}]},{"ObjectTags":[{"v":1,"id":"arivis.analysis.volume.FeatureFilter1.0.0"}]}]</inputs>
+      <outputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.volume.ObjectMath2.0.0","p":null,"n":"Splitting-Red","a":true,"cm":2,"c":"#D80000"}]}]</outputs>
+      <settings>{"Modification":"Intersect","UseFullConnectivity":true,"OnlyModifiedObjects":false,"ObjectNamePattern":"$n ($o)"}</settings>
+    </operation>
+    <operation type-id="arivis.analysis.volume.ObjectMath" id="arivis.analysis.volume.ObjectMath3" name="Object Math 3">
+      <inputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.segmentation.CellposeSegmentationOperation1.0.0"}]},{"ObjectTags":[{"v":1,"id":"arivis.analysis.volume.FeatureFilter3.0.0"}]}]</inputs>
+      <outputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.volume.ObjectMath3.0.0","p":null,"n":"Splitting-Green","a":true,"cm":2,"c":"#00BA00"}]}]</outputs>
+      <settings>{"Modification":"Intersect","UseFullConnectivity":true,"OnlyModifiedObjects":false,"ObjectNamePattern":"$n ($o)"}</settings>
+    </operation>
+    <operation type-id="arivis.analysis.volume.ObjectMath" id="arivis.analysis.volume.ObjectMath4" name="Object Math 4">
+      <inputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.segmentation.CellposeSegmentationOperation1.0.0"}]},{"ObjectTags":[{"v":1,"id":"arivis.analysis.volume.ObjectMath1.0.0"}]}]</inputs>
+      <outputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.volume.ObjectMath4.0.0","p":null,"n":"Splitting-Red-Green","a":true,"cm":2,"c":"#C96EC9"}]}]</outputs>
+      <settings>{"Modification":"Intersect","UseFullConnectivity":true,"OnlyModifiedObjects":false,"ObjectNamePattern":"$n ($o)"}</settings>
+    </operation>
+    <operation type-id="arivis.analysis.store.ExportObjectFeatures" id="arivis.analysis.store.ExportObjectFeatures1" name="Export Object Features">
+      <inputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.segmentation.CellposeSegmentationOperation1.0.0"},{"v":1,"id":"arivis.analysis.volume.FeatureFilter3.0.0"},{"v":1,"id":"arivis.analysis.volume.FeatureFilter1.0.0"},{"v":1,"id":"arivis.analysis.volume.ObjectMath1.0.0"},{"v":1,"id":"arivis.analysis.volume.ObjectMath2.0.0"},{"v":1,"id":"arivis.analysis.volume.ObjectMath3.0.0"},{"v":1,"id":"arivis.analysis.volume.ObjectMath4.0.0"}]}]</inputs>
+      <settings>{"FilePath":"A:\\tslilt\\2024-08-11_DBS_G-TRACE_PH3inFR_20Gy_24hX63_2024-08-11_10.30.34...PH3inFR_20Gy_24hX63_2024-08-11_10.30.34-objectfeatures.xlsx","Features":[{"FeatureId":"id","ValueIndex":0},{"FeatureId":"arivis.analysis.features.name","ValueIndex":0},{"FeatureId":"arivis.analysis.features.volume","ValueIndex":0},{"FeatureId":"7c37a110-d281-4335-8f16-7291d1fb0d5c","ValueIndex":0},{"FeatureId":"7c37a110-d281-4335-8f16-7291d1fb0d5c","ValueIndex":1},{"FeatureId":"f355a408-9cf6-479f-b407-c191ff1185d9","ValueIndex":0},{"FeatureId":"f355a408-9cf6-479f-b407-c191ff1185d9","ValueIndex":1},{"FeatureId":"f3948e41-01f9-4d41-87d2-95aa727c252a","ValueIndex":0},{"FeatureId":"f3948e41-01f9-4d41-87d2-95aa727c252a","ValueIndex":1}],"Details":null,"Mode":"SingleTable"}</settings>
+    </operation>
+    <operation type-id="arivis.analysis.store.StoreObjects" id="arivis.analysis.store.StoreObjects1">
+      <inputs>[{"ObjectTags":[{"v":1,"id":"arivis.analysis.segmentation.CellposeSegmentationOperation1.0.0"},{"v":1,"id":"arivis.analysis.volume.FeatureFilter1.0.0"},{"v":1,"id":"arivis.analysis.volume.FeatureFilter3.0.0"},{"v":1,"id":"arivis.analysis.volume.ObjectMath1.0.0"},{"v":1,"id":"arivis.analysis.volume.ObjectMath2.0.0"},{"v":1,"id":"arivis.analysis.volume.ObjectMath3.0.0"},{"v":1,"id":"arivis.analysis.volume.ObjectMath4.0.0"}]}]</inputs>
+      <settings>{"NamePattern":"$n","TagPattern":"$n","TagsToAdd":null,"TagsToDelete":["Dist1","All Red blobs","All Green","Dist2"],"PreserveAllTags":false,"MeshSegments":false,"KeepOnUndo":false}</settings>
+    </operation>
+    <operation type-id="arivis.analysis.endOfPipeline" id="arivis.analysis.endOfPipeline1">
+      <settings />
+    </operation>
+  </operations>
+  <layout>
+    <entry name="arivis.analysis.store.StoreObjects1">[]</entry>
+    <entry name="_viewpartstates">arivis.analysis.selection1=advanced
+arivis.analysis.segmentation.CellposeSegmentationOperation1=advanced
+arivis.analysis.segmentation.CellposeSegmentationOperation2=advanced
+arivis.analysis.volume.Distances1=advanced
+arivis.analysis.volume.Distances2=advanced
+</entry>
+  </layout>
+  <features><![CDATA[{"Version":"3.1","Features":[{"FactoryId":"arivis.analysis.features.intensities","Id":"arivis.analysis.features.intensities[2]","Name":"Intensities #3","Parameter":"{\"Channel\":2}"},{"FactoryId":"arivis.analysis.features.intensities","Id":"arivis.analysis.features.intensities[0]","Name":"Intensities #1","Parameter":"{\"Channel\":0}"},{"FactoryId":"arivis.objectstore.features.stored","Id":"7c37a110-d281-4335-8f16-7291d1fb0d5c","Name":"Distances-Min","Parameter":"{\"Identifier\":\"7c37a110-d281-4335-8f16-7291d1fb0d5c\",\"Name\":\"Distances-Min\",\"Values\":[{\"Name\":\"Distance\",\"Unit\":\"Length\",\"DataType\":1},{\"Name\":\"Id\",\"Unit\":null,\"DataType\":10}]}"},{"FactoryId":"arivis.objectstore.features.stored","Id":"f3948e41-01f9-4d41-87d2-95aa727c252a","Name":"Distances 2-Min","Parameter":"{\"Identifier\":\"f3948e41-01f9-4d41-87d2-95aa727c252a\",\"Name\":\"Distances 2-Min\",\"Values\":[{\"Name\":\"Distance\",\"Unit\":\"Length\",\"DataType\":1},{\"Name\":\"Id\",\"Unit\":null,\"DataType\":10}]}"},{"FactoryId":"arivis.objectstore.features.stored","Id":"f355a408-9cf6-479f-b407-c191ff1185d9","Name":"Distance-Min","Parameter":"{\"Identifier\":\"f355a408-9cf6-479f-b407-c191ff1185d9\",\"Name\":\"Distance-Min\",\"Values\":[{\"Name\":\"Distance\",\"Unit\":\"Length\",\"DataType\":1},{\"Name\":\"Id\",\"Unit\":null,\"DataType\":10}]}"}]}]]></features>
+</pipeline>
