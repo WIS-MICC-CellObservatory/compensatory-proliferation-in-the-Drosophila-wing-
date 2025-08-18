@@ -17,3 +17,5 @@ To quantify the results in the experiments presented in: figures 1B-C, 3E-F, 4C-
 5. All regions of interest and processed images were documented and saved. The results were exported as .csv files for further statistical analysis.
 
 The macro, 231213_Automation_Macro.ijm, can be found under [Fiji folder](../../tree/main/Fiji)
+### 3D image analysis using Arivis
+We segmented the splitting cells (grey channel) and the G-TRACE DARE lineage cells (green channel) using out-of-the-box Cellpose Cyto2 model. The Red signal of the G-TRACE DARE cells was segmented using Arivis Blob finder because of the nature of the signal. Filtering was done to remove too-small identified cells, or objects with low mean intensity. Then, the distance between the surface of the identified splitting cells to the  green G-TRACE DARE lineage cells and red G-TRACE DARE cells cells was calculated. (The minimal of these two distances was set as the minimal distance of each Splitting cell to either green G-TRACE DARE lineage cell or red G-TRACE DARE cell.) The intersection of all identified objects was also segmented (for overlap analysis)
